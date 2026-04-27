@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bar.style.width = '60%';
             statusText.textContent = 'Scanning for plagiarism...';
 
-            const response = await fetch('http://localhost:3000/api/scan', {
+            const response = await fetch('/api/scan', {
                 method: 'POST',
                 body: formData
             });
