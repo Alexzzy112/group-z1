@@ -519,6 +519,90 @@ button {
     display: none !important;
 }
 
+@media (max-width: 768px) {
+    .navbar {
+        flex-wrap: wrap;
+        padding: 1rem 3%;
+        margin: 1rem 0;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+    }
+
+    .user-profile {
+        width: 100%;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .logo {
+        font-size: 1.3rem;
+    }
+
+    .container {
+        margin: 2rem auto;
+        padding: 0 3%;
+    }
+
+    .upload-section,
+    .results-section,
+    .dashboard-section,
+    .login-container {
+        padding: 1.5rem;
+    }
+
+    .upload-section {
+        max-width: 100%;
+    }
+
+    .drag-drop-zone {
+        padding: 1.5rem;
+    }
+
+    .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .score-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons button {
+        width: 100%;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .page-header p {
+        font-size: 1rem;
+    }
+
+    .dashboard-header,
+    .results-details {
+        width: 100%;
+    }
+
+    .login-container {
+        margin: 6vh auto;
+        width: min(100%, 420px);
+    }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
