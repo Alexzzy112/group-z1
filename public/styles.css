@@ -109,7 +109,7 @@ body {
     gap: 0.5rem;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #fff;
+    color: #000;
 }
 
 .logo-icon {
@@ -132,7 +132,7 @@ body {
 }
 
 .nav-links a:hover, .nav-links a.active {
-    color: #fff;
+    color: var(--primary-color);
 }
 
 .nav-links a.active::after {
@@ -178,9 +178,7 @@ body {
 .page-header h1 {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
-    background: linear-gradient(to right, #818cf8, #c084fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #000;
 }
 
 .page-header p {
@@ -229,6 +227,16 @@ body {
 .drag-drop-zone h2 {
     font-size: 1.5rem;
     font-weight: 600;
+}
+
+.upload-section .input-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: rgba(15, 23, 42, 0.5);
+    color: white;
+    font-family: 'Outfit', sans-serif;
 }
 
 .file-limits {
