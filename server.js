@@ -37,44 +37,103 @@ if (useCloudinary) {
     });
 }
 
-const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
+const mongoUri = process.env.MONGODB_URI;
+const localMongoUri = process.env.MONGODB_LOCAL_URI || process.env.LOCAL_MONGODB_URI || 'mongodb://127.0.0.1:27017';
 const mongoDbName = process.env.MONGODB_DB || 'groupz1';
-const mongoClient = new MongoClient(mongoUri);
+let mongoClient;
 let referenceCollection;
 let submissionsCollection;
+let useMongo = false;
+let referenceDatabaseCache = [];
+let submissionsHistoryCache = [];
+
+async function connectMongo(uri) {
+    const client = new MongoClient(uri, {
+        serverSelectionTimeoutMS: 10000,
+        directConnection: false
+    });
+    await client.connect();
+    return client;
+}
+
+function loadFallbackData() {
+    const sourceDbPath = path.join(staticRoot, 'database.json');
+    const sourceSubPath = path.join(staticRoot, 'submissions.json');
+
+    if (fs.existsSync(sourceDbPath)) {
+        referenceDatabaseCache = JSON.parse(fs.readFileSync(sourceDbPath, 'utf8'));
+    } else {
+        referenceDatabaseCache = [
+            { id: 1, title: "History of Computer Science", text: "Computer science is the study of computation, information, and automation. Computer science spans theoretical disciplines to practical disciplines." },
+            { id: 2, title: "Machine Learning Basics", text: "Machine learning is a field of inquiry devoted to understanding and building methods that 'learn', that is, methods that leverage data to improve performance on some set of tasks." },
+            { id: 3, title: "The Solar System", text: "The Solar System is the gravitationally bound system of the Sun and the objects that orbit it. It formed 4.6 billion years ago from the gravitational collapse of a giant interstellar molecular cloud." },
+            { id: 4, title: "Student Sample Assignment", text: "In this assignment, we will explore the impacts of artificial intelligence on modern society. AI has drastically changed how we process data and communicate." }
+        ];
+    }
+
+    if (fs.existsSync(sourceSubPath)) {
+        submissionsHistoryCache = JSON.parse(fs.readFileSync(sourceSubPath, 'utf8'));
+    } else {
+        submissionsHistoryCache = [];
+    }
+}
 
 async function initMongo() {
-    try {
-        await mongoClient.connect();
-        const db = mongoClient.db(mongoDbName);
-        referenceCollection = db.collection('references');
-        submissionsCollection = db.collection('submissions');
+    const candidates = [];
+    if (mongoUri) candidates.push(mongoUri);
+    if (localMongoUri && localMongoUri !== mongoUri) candidates.push(localMongoUri);
 
-        const referenceCount = await referenceCollection.countDocuments();
-        if (referenceCount === 0) {
-            let referenceDatabase = [];
-            const sourceDbPath = path.join(staticRoot, 'database.json');
-            if (fs.existsSync(sourceDbPath)) {
-                referenceDatabase = JSON.parse(fs.readFileSync(sourceDbPath, 'utf8'));
-            } else {
-                referenceDatabase = [
-                    { id: 1, title: "History of Computer Science", text: "Computer science is the study of computation, information, and automation. Computer science spans theoretical disciplines to practical disciplines." },
-                    { id: 2, title: "Machine Learning Basics", text: "Machine learning is a field of inquiry devoted to understanding and building methods that 'learn', that is, methods that leverage data to improve performance on some set of tasks." },
-                    { id: 3, title: "The Solar System", text: "The Solar System is the gravitationally bound system of the Sun and the objects that orbit it. It formed 4.6 billion years ago from the gravitational collapse of a giant interstellar molecular cloud." },
-                    { id: 4, title: "Student Sample Assignment", text: "In this assignment, we will explore the impacts of artificial intelligence on modern society. AI has drastically changed how we process data and communicate." }
-                ];
-            }
-            if (referenceDatabase.length > 0) {
-                await referenceCollection.insertMany(referenceDatabase.map((doc, index) => ({
-                    id: doc.id ?? index + 1,
-                    title: doc.title,
-                    text: doc.text
-                })));
-            }
+    let lastError = null;
+    for (const uri of candidates) {
+        try {
+            mongoClient = await connectMongo(uri);
+            console.log('Connected to MongoDB:', uri);
+            useMongo = true;
+            break;
+        } catch (error) {
+            lastError = error;
+            console.error(`MongoDB connection failed for ${uri}:`, error.message || error);
         }
-    } catch (error) {
-        console.error('MongoDB initialization error:', error);
-        process.exit(1);
+    }
+
+    if (!useMongo) {
+        console.warn('MongoDB is unavailable. Falling back to local JSON storage. Uploads will still work locally, but data is not persisted in MongoDB.');
+        loadFallbackData();
+        return;
+    }
+
+    const db = mongoClient.db(mongoDbName);
+    referenceCollection = db.collection('references');
+    submissionsCollection = db.collection('submissions');
+
+    const referenceCount = await referenceCollection.countDocuments();
+    if (referenceCount === 0) {
+        let referenceDatabase = [];
+        const sourceDbPath = path.join(staticRoot, 'database.json');
+        if (fs.existsSync(sourceDbPath)) {
+            referenceDatabase = JSON.parse(fs.readFileSync(sourceDbPath, 'utf8'));
+        } else {
+            referenceDatabase = [
+                { id: 1, title: "History of Computer Science", text: "Computer science is the study of computation, information, and automation. Computer science spans theoretical disciplines to practical disciplines." },
+                { id: 2, title: "Machine Learning Basics", text: "Machine learning is a field of inquiry devoted to understanding and building methods that 'learn', that is, methods that leverage data to improve performance on some set of tasks." },
+                { id: 3, title: "The Solar System", text: "The Solar System is the gravitationally bound system of the Sun and the objects that orbit it. It formed 4.6 billion years ago from the gravitational collapse of a giant interstellar molecular cloud." },
+                { id: 4, title: "Student Sample Assignment", text: "In this assignment, we will explore the impacts of artificial intelligence on modern society. AI has drastically changed how we process data and communicate." }
+            ];
+        }
+        if (referenceDatabase.length > 0) {
+            await referenceCollection.insertMany(referenceDatabase.map((doc, index) => ({
+                id: doc.id ?? index + 1,
+                title: doc.title,
+                text: doc.text
+            })));
+        }
+    }
+    const submissionsCount = await submissionsCollection.countDocuments();
+    if (submissionsCount === 0 && fs.existsSync(path.join(staticRoot, 'submissions.json'))) {
+        const fallbackSubmissions = JSON.parse(fs.readFileSync(path.join(staticRoot, 'submissions.json'), 'utf8'));
+        if (Array.isArray(fallbackSubmissions) && fallbackSubmissions.length > 0) {
+            await submissionsCollection.insertMany(fallbackSubmissions);
+        }
     }
 }
 
@@ -183,7 +242,9 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
         let bestMatchDetails = null;
 
         // Extract reference texts to compare against
-        const referenceDatabase = await referenceCollection.find().toArray();
+        const referenceDatabase = useMongo
+            ? await referenceCollection.find().toArray()
+            : referenceDatabaseCache;
         const referenceTexts = referenceDatabase.map(doc => doc.text);
         
         if (referenceTexts.length > 0) {
@@ -242,8 +303,17 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
             topMatch: matchedSource
         };
         
-        const savedSubmission = await submissionsCollection.insertOne(newSubmission);
-        newSubmission._id = savedSubmission.insertedId;
+        if (useMongo) {
+            const savedSubmission = await submissionsCollection.insertOne(newSubmission);
+            newSubmission._id = savedSubmission.insertedId;
+        } else {
+            submissionsHistoryCache.unshift(newSubmission);
+            try {
+                fs.writeFileSync(path.join(__dirname, 'submissions.json'), JSON.stringify(submissionsHistoryCache, null, 2));
+            } catch (err) {
+                console.error('Failed to save submission to local cache:', err);
+            }
+        }
 
         // 3. Return Results
         setTimeout(() => {
@@ -282,7 +352,9 @@ app.post('/api/login', (req, res) => {
 app.get('/api/submissions', async (req, res) => {
     // In a real app, verify the authorization token here
     try {
-        const submissions = await submissionsCollection.find().sort({ date: -1 }).toArray();
+        const submissions = useMongo
+            ? await submissionsCollection.find().sort({ date: -1 }).toArray()
+            : submissionsHistoryCache.slice();
         res.json({ success: true, submissions });
     } catch (error) {
         console.error('Failed to fetch submissions:', error);
@@ -295,7 +367,13 @@ app.delete('/api/submissions/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const submissionToDelete = await submissionsCollection.findOne({ id: id });
+        let submissionToDelete;
+        if (useMongo) {
+            submissionToDelete = await submissionsCollection.findOne({ id: id });
+        } else {
+            submissionToDelete = submissionsHistoryCache.find(sub => sub.id === id);
+        }
+
         if (!submissionToDelete) {
             return res.status(404).json({ success: false, error: 'Submission not found' });
         }
@@ -323,11 +401,21 @@ app.delete('/api/submissions/:id', async (req, res) => {
             }
         }
 
-        const deleteResult = await submissionsCollection.deleteOne({ id: id });
-        if (deleteResult.deletedCount === 1) {
-            res.json({ success: true });
+        if (useMongo) {
+            const deleteResult = await submissionsCollection.deleteOne({ id: id });
+            if (deleteResult.deletedCount === 1) {
+                res.json({ success: true });
+            } else {
+                res.status(500).json({ success: false, error: 'Failed to delete submission' });
+            }
         } else {
-            res.status(500).json({ success: false, error: 'Failed to delete submission' });
+            submissionsHistoryCache = submissionsHistoryCache.filter(sub => sub.id !== id);
+            try {
+                fs.writeFileSync(path.join(__dirname, 'submissions.json'), JSON.stringify(submissionsHistoryCache, null, 2));
+            } catch (err) {
+                console.error('Failed to update local submissions cache:', err);
+            }
+            res.json({ success: true });
         }
     } catch (error) {
         console.error('Delete submission error:', error);
