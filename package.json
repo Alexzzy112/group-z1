@@ -1,8 +1,12 @@
 {
-  "name": "scanner",
+  "name": "group-z1",
   "version": "1.0.0",
-  "description": "",
+  "description": "Plagiarism scanning web app for Group Z1",
   "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alexzzy112/group-z1.git"
+  },
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
