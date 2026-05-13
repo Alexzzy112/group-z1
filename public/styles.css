@@ -735,39 +735,39 @@ button {
 
 /* Tuning for 720px width devices (example: 720x1612) */
 @media (max-width: 720px) {
-    :root { --navbar-height: 56px; }
+    :root { --navbar-height: 40px; }
 
     .navbar {
-        padding: 0.25rem 0.6rem;
+        padding: 0.1rem 0.4rem;
         min-height: var(--navbar-height);
     }
 
     .logo {
-        font-size: 1rem;
-        gap: 0.4rem;
+        font-size: 0.9rem;
+        gap: 0.3rem;
     }
 
     .logo-icon {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
     }
 
     .nav-links a {
-        font-size: 0.88rem;
-        padding: 0.1rem 0.2rem;
+        font-size: 0.8rem;
+        padding: 0 0.15rem;
     }
 
     .nav-links {
-        gap: 0.6rem;
+        gap: 0.4rem;
     }
 
     .user-profile span {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     .user-profile img {
-        width: 26px;
-        height: 26px;
+        width: 20px;
+        height: 20px;
     }
 }
 
