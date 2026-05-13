@@ -26,10 +26,10 @@
 
         .modal-content {
             background: var(--bg-color);
-            padding: 2rem;
-            border-radius: 12px;
+            padding: 1.25rem;
+            border-radius: 10px;
             width: 90%;
-            max-width: 600px;
+            max-width: 420px;
             border: 1px solid var(--glass-border);
         }
 
@@ -90,15 +90,15 @@
         <div class="logo">
             <i data-lucide="shield-check" class="logo-icon"></i>
             <span>GROUP-Z1 <span
-                    style="font-weight: 300; font-size: 1rem; margin-left: 0.5rem; color: var(--text-secondary);">Admin
-                    Portal</span></span>
+                style="font-weight: 300; font-size: 1rem; margin-left: 0.5rem; color: var(--text-secondary);">Admin
+                Portal</span></span>
         </div>
         <div class="nav-links">
             <a href="#" class="active">Dashboard</a>
             <a href="index.html">Student View</a>
         </div>
         <div class="user-profile">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin Profile">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin Profile" loading="lazy" onerror="this.onerror=null;this.src='assets/default-avatar.svg'">
             <span>Admin</span>
             <button id="logout-btn" class="btn-icon" title="Logout"><i data-lucide="log-out"></i></button>
         </div>
@@ -162,7 +162,7 @@
             </div>
             <div class="results-section" style="padding: 0;">
                 <div class="score-container" style="justify-content: center; margin-bottom: 2rem;">
-                    <svg class="circular-chart" viewBox="0 0 36 36" style="width: 150px; height: 150px;">
+                    <svg class="circular-chart" viewBox="0 0 36 36" style="width: 120px; height: 120px;">
                         <path class="circle-bg"
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                         <path class="circle" id="modal-score-circle" stroke-dasharray="0, 100"

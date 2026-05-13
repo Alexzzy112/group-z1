@@ -73,9 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const file = files[0];
             
             // Validate file type
-            const validTypes = ['application/pdf', 'text/plain'];
-            if (!validTypes.includes(file.type) && !file.name.endsWith('.pdf') && !file.name.endsWith('.txt')) {
-                alert("Please upload a .pdf or .txt file.");
+            const validTypes = [
+                'application/pdf',
+                'text/plain',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            ];
+            if (!validTypes.includes(file.type) && !file.name.match(/\.(pdf|txt|doc|docx)$/i)) {
+                alert("Please upload a .pdf, .txt, .doc or .docx file.");
                 return;
             }
             
@@ -167,6 +172,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 scoreCircle.classList.add('danger');
             }
         }, 100);
+
+        // Enable download button (server returns `id` and `fileUrl`)
+        const downloadBtn = document.getElementById('download-file-btn');
+        if (downloadBtn) {
+            if (data && data.id) {
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.onclick = () => {
+                    window.open(`/api/submissions/${data.id}/download`, '_blank');
+                };
+            } else {
+                downloadBtn.classList.add('hidden');
+                downloadBtn.onclick = null;
+            }
+        }
     }
 
     function animateValue(obj, start, end, duration) {
@@ -206,4 +225,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultsHeader = document.querySelector('.results-header h2');
         resultsHeader.innerHTML = 'Originality Report';
     });
+
+        // Mobile nav toggle: open/close collapsed nav-links
+        const menuToggles = document.querySelectorAll('.menu-toggle');
+        menuToggles.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const nav = btn.closest('.navbar');
+                if (!nav) return;
+                const links = nav.querySelector('.nav-links');
+                if (!links) return;
+                links.classList.toggle('open');
+                // re-run icon rendering for any changed icons (lucide)
+                try { lucide.createIcons(); } catch (e) { /* ignore */ }
+            });
+        });
+
+        // Close mobile menu when resizing to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                document.querySelectorAll('.nav-links.open').forEach(n => n.classList.remove('open'));
+            }
+        });
 });

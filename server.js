@@ -38,7 +38,7 @@ if (useCloudinary) {
 }
 
 const mongoUri = process.env.MONGODB_URI;
-const localMongoUri = process.env.MONGODB_LOCAL_URI || process.env.LOCAL_MONGODB_URI || 'mongodb://127.0.0.1:27017';
+const localMongoUri = process.env.MONGODB_LOCAL_URI || process.env.LOCAL_MONGODB_URI || null;
 const mongoDbName = process.env.MONGODB_DB || 'groupz1';
 let mongoClient;
 let referenceCollection;
@@ -69,12 +69,26 @@ function loadFallbackData() {
             { id: 3, title: "The Solar System", text: "The Solar System is the gravitationally bound system of the Sun and the objects that orbit it. It formed 4.6 billion years ago from the gravitational collapse of a giant interstellar molecular cloud." },
             { id: 4, title: "Student Sample Assignment", text: "In this assignment, we will explore the impacts of artificial intelligence on modern society. AI has drastically changed how we process data and communicate." }
         ];
+        // persist initial reference DB so the virtual DB exists on disk
+        try {
+            fs.writeFileSync(sourceDbPath, JSON.stringify(referenceDatabaseCache, null, 2));
+            console.log('Created', sourceDbPath, 'with sample references');
+        } catch (e) {
+            console.warn('Could not write sample database.json:', e && e.message ? e.message : e);
+        }
     }
 
     if (fs.existsSync(sourceSubPath)) {
         submissionsHistoryCache = JSON.parse(fs.readFileSync(sourceSubPath, 'utf8'));
     } else {
         submissionsHistoryCache = [];
+        // persist empty submissions file so it exists for later writes
+        try {
+            fs.writeFileSync(sourceSubPath, JSON.stringify(submissionsHistoryCache, null, 2));
+            console.log('Created', sourceSubPath);
+        } catch (e) {
+            console.warn('Could not write submissions.json:', e && e.message ? e.message : e);
+        }
     }
 }
 
@@ -82,6 +96,13 @@ async function initMongo() {
     const candidates = [];
     if (mongoUri) candidates.push(mongoUri);
     if (localMongoUri && localMongoUri !== mongoUri) candidates.push(localMongoUri);
+
+    // If no MongoDB URIs provided, use the built-in file-based fallback as the virtual DB
+    if (candidates.length === 0) {
+        console.warn('No MongoDB URI provided. Using file-based virtual database.');
+        loadFallbackData();
+        return;
+    }
 
     let lastError = null;
     for (const uri of candidates) {
@@ -190,6 +211,9 @@ async function extractText(file) {
         // For the prototype, we simulate extraction by using the filename or a dummy string
         // In production, we'd use a different parser.
         return "Simulated text from PDF: " + file.originalname + " " + "Computer science is the study of computation.";
+    } else if (mimeType === 'application/msword' || mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        // Simulate extraction for Word documents for the prototype.
+        return "Simulated text from Word document: " + file.originalname + " " + "Computer science is the study of computation.";
     } else {
         throw new Error('Unsupported file format. Please upload PDF or TXT.');
     }
@@ -200,9 +224,13 @@ async function uploadToCloudinary(file) {
         throw new Error('Cloudinary is not configured.');
     }
 
+    // Choose resource_type: use 'raw' for non-image files (pdf/doc/docx), otherwise 'auto'
+    const isRaw = /\.(pdf|docx|doc|txt)$/i.test(file.originalname) || (file.mimetype && !file.mimetype.startsWith('image'));
+    const resourceType = isRaw ? 'raw' : 'auto';
+
     if (file.path && fs.existsSync(file.path)) {
         return await cloudinary.uploader.upload(file.path, {
-            resource_type: 'auto',
+            resource_type: resourceType,
             folder: 'groupz1_uploads'
         });
     }
@@ -315,11 +343,13 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
             }
         }
 
-        // 3. Return Results
+        // 3. Return Results (include fileUrl and id so client can download)
         setTimeout(() => {
             // Added artificial delay to simulate "processing time"
             res.json({
                 success: true,
+                id: newSubmission.id,
+                fileUrl: newSubmission.fileUrl,
                 score: score,
                 breakdown: {
                     internet: internetScore,
@@ -420,6 +450,71 @@ app.delete('/api/submissions/:id', async (req, res) => {
     } catch (error) {
         console.error('Delete submission error:', error);
         res.status(500).json({ success: false, error: 'Failed to delete submission' });
+    }
+});
+
+// Download submission file (serve local file or redirect to remote)
+app.get('/api/submissions/:id/download', async (req, res) => {
+    const { id } = req.params;
+    try {
+        let submission;
+        if (useMongo) {
+            submission = await submissionsCollection.findOne({ id: id });
+        } else {
+            submission = submissionsHistoryCache.find(s => s.id === id);
+        }
+
+        if (!submission) {
+            return res.status(404).json({ success: false, error: 'Submission not found' });
+        }
+            const fileUrl = submission.fileUrl;
+
+            // If we have a Cloudinary public id, try to resolve a delivery URL server-side and redirect
+            if (submission.cloudinaryPublicId) {
+                try {
+                    const info = await cloudinary.api.resource(submission.cloudinaryPublicId, { resource_type: 'auto' });
+                    if (info && info.secure_url) {
+                        return res.redirect(info.secure_url);
+                    }
+                } catch (e) {
+                    console.warn('Could not resolve Cloudinary resource via API:', e && e.message ? e.message : e);
+                    // Try generating a signed delivery URL as a fallback (useful for private/authenticated assets)
+                    try {
+                        const signedUrl = cloudinary.url(submission.cloudinaryPublicId, { resource_type: 'auto', sign_url: true, secure: true });
+                        if (signedUrl) return res.redirect(signedUrl);
+                    } catch (e2) {
+                        console.warn('Could not generate signed Cloudinary URL:', e2 && e2.message ? e2.message : e2);
+                    }
+                    // Fall through to try fileUrl/local serve
+                }
+            }
+
+            // If fileUrl is an absolute http(s) URL (Cloudinary raw URL or external blob), redirect to it
+            if (typeof fileUrl === 'string' && /^https?:\/\//i.test(fileUrl)) {
+                return res.redirect(fileUrl);
+            }
+
+            // If it's a Vercel Blob public URL, redirect as well
+            if (typeof fileUrl === 'string' && fileUrl.includes('public.blob.vercel-storage.com')) {
+                return res.redirect(fileUrl);
+            }
+
+            // Otherwise assume it's a local upload under /uploads
+            if (typeof fileUrl === 'string' && fileUrl.startsWith('/uploads/')) {
+                const filename = path.basename(fileUrl);
+                const filePath = path.join(uploadDir, filename);
+                if (fs.existsSync(filePath)) {
+                    return res.download(filePath, submission.fileName || filename, (err) => {
+                        if (err) console.error('Download error:', err);
+                    });
+                }
+                return res.status(404).json({ success: false, error: 'File not found on server' });
+            }
+
+            return res.status(400).json({ success: false, error: 'Unsupported file location' });
+    } catch (error) {
+        console.error('Download error:', error);
+        res.status(500).json({ success: false, error: 'Failed to download file' });
     }
 });
 
