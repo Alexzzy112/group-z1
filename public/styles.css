@@ -130,6 +130,18 @@ body {
     gap: 1.2rem;
 }
 
+/* Homepage layout: logo left, links centered, profile right */
+.navbar.home .logo {
+    flex: 0 0 auto;
+}
+.navbar.home .nav-links {
+    flex: 1 1 auto;
+    justify-content: center;
+}
+.navbar.home .user-profile {
+    flex: 0 0 auto;
+}
+
 .nav-links a {
     color: var(--text-secondary);
     text-decoration: none;
