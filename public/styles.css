@@ -735,10 +735,10 @@ button {
 
 /* Tuning for 720px width devices (example: 720x1612) */
 @media (max-width: 720px) {
-    :root { --navbar-height: 64px; }
+    :root { --navbar-height: 56px; }
 
     .navbar {
-        padding: 0.35rem 0.75rem;
+        padding: 0.25rem 0.6rem;
         min-height: var(--navbar-height);
     }
 
@@ -753,8 +753,8 @@ button {
     }
 
     .nav-links a {
-        font-size: 0.92rem;
-        padding: 0.15rem 0.25rem;
+        font-size: 0.88rem;
+        padding: 0.1rem 0.2rem;
     }
 
     .nav-links {
