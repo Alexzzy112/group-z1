@@ -366,6 +366,7 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
         }
 
         // 3. Return Results (include fileUrl and id so client can download)
+        console.log('New submission fileUrl resolved:', fileUrl);
         setTimeout(() => {
             // Added artificial delay to simulate "processing time"
             res.json({
@@ -523,6 +524,13 @@ app.get('/api/submissions/:id/download', async (req, res) => {
 
             // Otherwise assume it's a local upload under /uploads
             if (typeof fileUrl === 'string' && fileUrl.startsWith('/uploads/')) {
+                // On serverless platforms (Vercel) local disk is ephemeral and not publicly available.
+                // Provide a clear error message so deploy-time misconfiguration is obvious.
+                if (isServerless) {
+                    console.warn('Attempted to serve local /uploads path from serverless environment:', fileUrl);
+                    return res.status(410).json({ success: false, error: 'File unavailable: deployment uses ephemeral filesystem. Configure Vercel Blob or Cloudinary for persistent file storage.' });
+                }
+
                 const filename = path.basename(fileUrl);
                 const filePath = path.join(uploadDir, filename);
                 if (fs.existsSync(filePath)) {
