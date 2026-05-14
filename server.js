@@ -9,7 +9,7 @@ const { put, del } = require('@vercel/blob');
 const { MongoClient } = require('mongodb');
 const cloudinary = require('cloudinary').v2;
 
-require('dotenv').config({ path: path.join(__dirname, '.env.local') });
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -94,8 +94,12 @@ function loadFallbackData() {
 
 async function initMongo() {
     const candidates = [];
-    if (mongoUri) candidates.push(mongoUri);
-    if (localMongoUri && localMongoUri !== mongoUri) candidates.push(localMongoUri);
+    if (isServerless) {
+        if (mongoUri) candidates.push(mongoUri);
+        if (localMongoUri && localMongoUri !== mongoUri) candidates.push(localMongoUri);
+    } else {
+        if (localMongoUri) candidates.push(localMongoUri);
+    }
 
     // If no MongoDB URIs provided, use the built-in file-based fallback as the virtual DB
     if (candidates.length === 0) {
