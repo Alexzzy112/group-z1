@@ -302,8 +302,15 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
             studentScore = score - internetScore - publicationScore;
         }
 
+        // Determine a safe filename for the uploaded file. Multer's memoryStorage
+        // (used on serverless) doesn't populate `req.file.filename`, so fall back
+        // to the original name or a generated name to avoid '/uploads/undefined'.
+        const safeName = req.file && (req.file.filename || req.file.originalname)
+            ? (req.file.filename || req.file.originalname)
+            : (`upload-${Date.now()}`);
+
         // Save file to Cloudinary if configured, otherwise preserve local upload URL.
-        let fileUrl = '/uploads/' + req.file.filename;
+        let fileUrl = '/uploads/' + safeName;
         let cloudinaryPublicId = null;
 
         // If Cloudinary is configured, upload there. Otherwise, when running on Vercel
@@ -326,7 +333,7 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
             try {
                 const blobBody = req.file.buffer ? req.file.buffer : fs.readFileSync(req.file.path);
                 const uploadResult = await put({
-                    name: req.file.filename || req.file.originalname,
+                    name: safeName,
                     body: blobBody,
                     token: process.env.BLOB_READ_WRITE_TOKEN
                 });
