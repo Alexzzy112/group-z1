@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "title": "History of Computer Science",
+    "text": "Computer science is the study of computation, information, and automation. Computer science spans theoretical disciplines to practical disciplines."
+  },
+  {
+    "id": 2,
+    "title": "Machine Learning Basics",
+    "text": "Machine learning is a field of inquiry devoted to understanding and building methods that 'learn', that is, methods that leverage data to improve performance on some set of tasks."
+  },
+  {
+    "id": 3,
+    "title": "The Solar System",
+    "text": "The Solar System is the gravitationally bound system of the Sun and the objects that orbit it. It formed 4.6 billion years ago from the gravitational collapse of a giant interstellar molecular cloud."
+  },
+  {
+    "id": 4,
+    "title": "Student Sample Assignment",
+    "text": "In this assignment, we will explore the impacts of artificial intelligence on modern society. AI has drastically changed how we process data and communicate."
+  }
+]
