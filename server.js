@@ -306,6 +306,9 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
         let fileUrl = '/uploads/' + req.file.filename;
         let cloudinaryPublicId = null;
 
+        // If Cloudinary is configured, upload there. Otherwise, when running on Vercel
+        // serverless environment, try to persist the file to Vercel Blob (public storage)
+        // so it can be downloaded later. Fall back to local `/uploads` path when not available.
         if (useCloudinary) {
             try {
                 const uploadResult = await uploadToCloudinary(req.file);
@@ -318,6 +321,21 @@ app.post('/api/scan', upload.single('file'), async (req, res) => {
                 } else {
                     fileUrl = '/uploads/failed-to-upload';
                 }
+            }
+        } else if (isServerless && process.env.BLOB_READ_WRITE_TOKEN) {
+            try {
+                const blobBody = req.file.buffer ? req.file.buffer : fs.readFileSync(req.file.path);
+                const uploadResult = await put({
+                    name: req.file.filename || req.file.originalname,
+                    body: blobBody,
+                    token: process.env.BLOB_READ_WRITE_TOKEN
+                });
+                if (uploadResult) {
+                    fileUrl = uploadResult.url || uploadResult.publicUrl || uploadResult.href || String(uploadResult);
+                }
+            } catch (uploadError) {
+                console.error('Vercel Blob upload failed:', uploadError && uploadError.message ? uploadError.message : uploadError);
+                fileUrl = '/uploads/' + req.file.filename;
             }
         }
 
