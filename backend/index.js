@@ -36,7 +36,7 @@ app.use('/api/', limiter);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-const uploadDir = path.join(__dirname, '..', 'uploads');
+const uploadDir = isServerless ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
 try { if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true }); } catch (e) { /* read-only fs on Vercel */ }
 app.use('/uploads', express.static(uploadDir));
 
