@@ -1,0 +1,15 @@
+{
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "functions": {
+    "api/index.js": {
+      "memory": 512,
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api" }
+  ],
+  "github": {
+    "silent": true
+  }
+}
