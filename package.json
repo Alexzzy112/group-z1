@@ -1,28 +1,40 @@
 {
   "name": "group-z1",
-  "version": "1.0.0",
-  "description": "Plagiarism scanning web app for Group Z1",
-  "main": "server.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Alexzzy112/group-z1.git"
-  },
+  "version": "2.0.0",
+  "description": "Online Assignment Submission System with Integrated Plagiarism Checker",
+  "main": "backend/index.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node backend/index.js",
+    "dev:server": "nodemon backend/index.js",
+    "dev:client": "cd frontend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "@vercel/blob": "^2.3.3",
     "cloudinary": "^1.36.0",
     "cors": "^2.8.6",
     "dotenv": "^16.3.1",
     "express": "^5.2.1",
-    "mongodb": "^6.0.0",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.0",
+    "morgan": "^1.10.0",
     "multer": "^2.1.1",
-    "string-similarity": "^4.0.4"
-  }
+    "bcryptjs": "^2.4.3",
+    "string-similarity": "^4.0.4",
+    "natural": "^6.10.4",
+    "nodemailer": "^6.9.7"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alexzzy112/group-z1.git"
+  },
+  "license": "ISC"
 }
