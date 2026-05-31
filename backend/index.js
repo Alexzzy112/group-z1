@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
 const helmet = require('helmet');
@@ -8,6 +7,8 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
+const { connectDB } = require('./utils/db');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -44,6 +45,13 @@ if (fs.existsSync(staticDir)) {
   app.use(express.static(staticDir));
 }
 
+app.use('/api/', async (req, res, next) => {
+  if (req.path === '/health') return next();
+  const db = await connectDB();
+  if (!db) return res.status(503).json({ error: 'Database connection unavailable' });
+  next();
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
@@ -64,29 +72,12 @@ app.get(/.*/, (req, res) => {
   res.status(200).json({ message: 'GroupZ1 API is running' });
 });
 
-async function connectDB() {
-  const uri = process.env.MONGODB_URI || process.env.MONGODB_LOCAL_URI;
-  if (!uri) {
-    console.warn('No MongoDB URI provided. Using file-based storage fallback.');
-    return false;
-  }
-  try {
-    await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
-    console.log('MongoDB connected');
-    return true;
-  } catch (err) {
-    console.error('MongoDB connection failed:', err.message);
-    console.warn('Falling back to file-based storage.');
-    return false;
-  }
-}
+connectDB();
 
-connectDB().then(() => {
-  if (!isServerless) {
-    app.listen(PORT, () => {
-      console.log(`GroupZ1 Platform running at http://localhost:${PORT}`);
-    });
-  }
-});
+if (!isServerless) {
+  app.listen(PORT, () => {
+    console.log(`GroupZ1 Platform running at http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;
