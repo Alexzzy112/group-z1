@@ -40,7 +40,10 @@ const uploadDir = isServerless ? '/tmp/uploads' : path.join(__dirname, '..', 'up
 try { if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true }); } catch (e) { /* read-only fs on Vercel */ }
 app.use('/uploads', express.static(uploadDir));
 
-const staticDir = path.join(__dirname, '..', 'frontend', 'dist');
+let staticDir = path.join(__dirname, '..', 'api', 'dist');
+if (!fs.existsSync(staticDir)) {
+  staticDir = path.join(__dirname, '..', 'frontend', 'dist');
+}
 if (fs.existsSync(staticDir)) {
   app.use(express.static(staticDir));
 }
