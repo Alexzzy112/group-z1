@@ -11,7 +11,25 @@ const { logActivity, createNotification } = require('../utils/helpers');
 
 const router = express.Router();
 
-const uploadDir = path.join(__dirname, '..', '..', 'uploads');
+const isServerless = !!process.env.VERCEL;
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+async function uploadToCloud(file) {
+  if (!isServerless) return '/uploads/' + file.filename;
+  try {
+    const result = await cloudinary.uploader.upload(file.path, {
+      resource_type: 'auto',
+      folder: 'groupz1',
+      public_id: file.filename.replace(/\.[^.]+$/, ''),
+    });
+    return result.secure_url;
+  } catch { return '/uploads/' + file.filename; }
+}
 
 router.post('/submit', auth, roles('student'), upload.array('files', 5), async (req, res) => {
   try {
@@ -28,13 +46,13 @@ router.post('/submit', auth, roles('student'), upload.array('files', 5), async (
       return res.status(400).json({ error: 'Resubmission not allowed for this assignment.' });
     }
 
-    const files = (req.files || []).map(f => ({
+    const files = await Promise.all((req.files || []).map(async f => ({
       originalName: f.originalname,
       fileName: f.filename,
-      fileUrl: '/uploads/' + f.filename,
+      fileUrl: await uploadToCloud(f),
       fileType: path.extname(f.originalname),
       fileSize: f.size
-    }));
+    })));
 
     let extractedText = textContent || '';
     if (!extractedText && files.length > 0) {
