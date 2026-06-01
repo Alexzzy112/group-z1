@@ -34,7 +34,7 @@ router.post('/', auth, roles('admin', 'lecturer'), async (req, res) => {
     course, title, description, instructions, maxMarks,
     deadline: new Date(deadline),
     allowedFileTypes: allowedFileTypes || ['.pdf', '.docx', '.doc', '.txt', '.zip'],
-    maxFileSize: maxFileSize || 52428800,
+    maxFileSize: maxFileSize || 1048576,
     allowResubmission: allowResubmission !== false,
     createdBy: req.user._id
   });

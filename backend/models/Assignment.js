@@ -8,7 +8,7 @@ const assignmentSchema = new mongoose.Schema({
   maxMarks: { type: Number, required: true, default: 100 },
   deadline: { type: Date, required: true },
   allowedFileTypes: { type: [String], default: ['.pdf', '.docx', '.doc', '.txt', '.zip'] },
-  maxFileSize: { type: Number, default: 52428800 },
+  maxFileSize: { type: Number, default: 1048576 },
   allowResubmission: { type: Boolean, default: true },
   isActive: { type: Boolean, default: true },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

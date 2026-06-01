@@ -110,7 +110,7 @@ export default function SubmitAssignment() {
         >
           <Upload className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-500 mb-3" />
           <p className="font-medium text-slate-700 dark:text-slate-300">Drag & drop files here, or click to browse</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Supports PDF, DOCX, DOC, TXT, ZIP (Max 100MB each)</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Supports PDF, DOCX, DOC, TXT, ZIP (Max 1MB each)</p>
         </div>
         <input id="file-input" type="file" multiple className="hidden" accept=".pdf,.docx,.doc,.txt,.zip,.rar,.7z" onChange={(e) => addFiles(Array.from(e.target.files))} />
 
