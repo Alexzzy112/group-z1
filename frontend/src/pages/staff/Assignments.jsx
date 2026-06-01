@@ -27,15 +27,18 @@ export default function StaffAssignments() {
 
   const openCreate = () => {
     setEditAssign(null);
-    setForm({ course: courseList[0]?._id || '', title: '', description: '', instructions: '', maxMarks: 100, deadline: '', allowedFileTypes: ['.pdf', '.docx', '.doc', '.txt', '.zip'], allowResubmission: true });
+    setForm({ course: '', title: '', description: '', instructions: '', maxMarks: 100, deadline: '', allowedFileTypes: ['.pdf', '.docx', '.doc', '.txt', '.zip'], allowResubmission: true });
     setShowModal(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editAssign) { await assignApi.update(editAssign._id, form); toast.success('Assignment updated'); }
-      else { await assignApi.create(form); toast.success('Assignment created'); }
+      const matched = courseList.find(c => c.code.toUpperCase() === form.course.trim().toUpperCase());
+      if (!matched) return toast.error('Course not found. Check the course code.');
+      const payload = { ...form, course: matched._id };
+      if (editAssign) { await assignApi.update(editAssign._id, payload); toast.success('Assignment updated'); }
+      else { await assignApi.create(payload); toast.success('Assignment created'); }
       setShowModal(false); fetch();
     } catch (err) { toast.error(err.response?.data?.error || 'Operation failed'); }
   };
@@ -70,7 +73,7 @@ export default function StaffAssignments() {
               <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600"><FileText className="w-5 h-5" /></div>
               <div className="flex gap-1">
                 <button onClick={() => viewSubmissions(a._id)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400" title="View submissions"><Eye className="w-4 h-4" /></button>
-                <button onClick={() => { setEditAssign(a); setForm({ course: a.course?._id || a.course, title: a.title, description: a.description, instructions: a.instructions, maxMarks: a.maxMarks, deadline: new Date(a.deadline).toISOString().slice(0, 16), allowedFileTypes: a.allowedFileTypes, allowResubmission: a.allowResubmission }); setShowModal(true); }} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400"><Edit2 className="w-4 h-4" /></button>
+                <button onClick={() => { setEditAssign(a); setForm({ course: a.course?.code || a.course, title: a.title, description: a.description, instructions: a.instructions, maxMarks: a.maxMarks, deadline: new Date(a.deadline).toISOString().slice(0, 16), allowedFileTypes: a.allowedFileTypes, allowResubmission: a.allowResubmission }); setShowModal(true); }} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400"><Edit2 className="w-4 h-4" /></button>
                 <button onClick={() => handleDelete(a._id)} className="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
               </div>
             </div>
@@ -116,7 +119,7 @@ export default function StaffAssignments() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-xl" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">{editAssign ? 'Edit Assignment' : 'Create New Assignment'}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div><label className="label">Course</label><select className="input" value={form.course} onChange={e => setForm({ ...form, course: e.target.value })} required>{courseList.map(c => <option key={c._id} value={c._id}>{c.code} - {c.title}</option>)}</select></div>
+              <div><label className="label">Course Code</label><input className="input" value={form.course} onChange={e => setForm({ ...form, course: e.target.value })} placeholder="e.g. CSC101" required /></div>
               <div><label className="label">Title</label><input className="input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
               <div><label className="label">Description</label><textarea className="input min-h-[80px]" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
               <div><label className="label">Instructions</label><textarea className="input min-h-[80px]" value={form.instructions} onChange={e => setForm({ ...form, instructions: e.target.value })} /></div>
