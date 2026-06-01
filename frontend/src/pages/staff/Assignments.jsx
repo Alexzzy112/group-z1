@@ -34,8 +34,9 @@ export default function StaffAssignments() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const matched = courseList.find(c => c.code.toUpperCase() === form.course.trim().toUpperCase());
-      if (!matched) return toast.error('Course not found. Check the course code.');
+      const { data } = await courseApi.list({ search: form.course.trim(), all: 'true' });
+      const matched = data.courses.find(c => c.code.toUpperCase() === form.course.trim().toUpperCase());
+      if (!matched) return toast.error('Course not found. Create the course first.');
       const payload = { ...form, course: matched._id };
       if (editAssign) { await assignApi.update(editAssign._id, payload); toast.success('Assignment updated'); }
       else { await assignApi.create(payload); toast.success('Assignment created'); }

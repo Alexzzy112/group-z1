@@ -9,8 +9,10 @@ const router = express.Router();
 
 router.get('/', auth, async (req, res) => {
   let query = {};
-  if (req.user.role === 'lecturer') query.lecturer = req.user._id;
-  if (req.user.role === 'student') query.students = req.user._id;
+  if (req.query.all !== 'true') {
+    if (req.user.role === 'lecturer') query.lecturer = req.user._id;
+    if (req.user.role === 'student') query.students = req.user._id;
+  }
   if (req.query.department) query.department = req.query.department;
   if (req.query.search) {
     query.$or = [
