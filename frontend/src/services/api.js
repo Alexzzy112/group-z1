@@ -67,6 +67,7 @@ export const courses = {
   create: (data) => api.post('/courses', data),
   update: (id, data) => api.put(`/courses/${id}`, data),
   delete: (id) => api.delete(`/courses/${id}`),
+  enroll: (code) => api.post('/courses/enroll', { code }),
   enrollStudents: (id, studentIds) => api.post(`/courses/${id}/enroll-students`, { studentIds }),
 };
 

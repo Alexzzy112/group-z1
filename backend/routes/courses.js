@@ -64,6 +64,19 @@ router.delete('/:id', auth, roles('admin'), async (req, res) => {
   res.json({ success: true });
 });
 
+router.post('/enroll', auth, roles('student'), async (req, res) => {
+  const { code } = req.body;
+  if (!code) return res.status(400).json({ error: 'Course code is required.' });
+  const course = await Course.findOne({ code: code.toUpperCase(), isActive: true });
+  if (!course) return res.status(404).json({ error: 'Course not found.' });
+  if (course.students.includes(req.user._id)) return res.status(400).json({ error: 'Already enrolled in this course.' });
+  course.students.push(req.user._id);
+  await course.save();
+  await User.findByIdAndUpdate(req.user._id, { $addToSet: { enrolledCourses: course._id } });
+  await logActivity(req.user._id, 'enroll_course', 'Course', course._id, `Enrolled in: ${code}`);
+  res.json({ course });
+});
+
 router.post('/:id/enroll-students', auth, roles('admin', 'lecturer'), async (req, res) => {
   const { studentIds } = req.body;
   const course = await Course.findByIdAndUpdate(
