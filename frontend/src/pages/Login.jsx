@@ -25,7 +25,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-slate-900 items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 25% 50%, rgba(255,255,255,0.2) 0%, transparent 60%)' }} />
         <div className="relative z-10 text-white max-w-md">
@@ -43,7 +43,7 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-slate-900">
+      <div className="flex-1 flex items-center justify-center px-8 pt-8 pb-16 bg-white dark:bg-slate-900">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 lg:hidden">
             <div className="inline-flex items-center gap-2 text-primary-600 mb-2"><GraduationCap className="w-8 h-8" /><span className="text-2xl font-bold">GroupZ1</span></div>
@@ -82,6 +82,11 @@ export default function Login() {
           </p>
         </div>
       </div>
+      <footer className="absolute bottom-0 left-0 right-0 text-center py-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-t border-slate-200 dark:border-slate-700 z-10">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          <span className="font-medium">Contact:</span> Nasarawa State University, Keffi — info@nsuk.edu.ng
+        </p>
+      </footer>
     </div>
   );
 }
