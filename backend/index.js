@@ -29,7 +29,17 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' }
 });
 
-app.use(helmet({ crossOriginResourcePolicy: false }));
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://pl29601127.effectivecpmnetwork.com"],
+      connectSrc: ["'self'", "https://pl29601127.effectivecpmnetwork.com"],
+      imgSrc: ["'self'", "data:", "https://pl29601127.effectivecpmnetwork.com"],
+    },
+  },
+}));
 app.use(cors());
 app.use(morgan('dev'));
 app.use('/api/', limiter);
