@@ -24,14 +24,14 @@ export default function StaffUsers() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">Manage Users</h1><p className="text-slate-500 dark:text-slate-400">View and manage all system users</p></div>
+      <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Manage Users</h1><p className="text-slate-500 dark:text-slate-400">View and manage all system users</p></div>
       <div className="card">
         <div className="flex flex-wrap items-center gap-4 mb-4">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input className="input pl-9 py-2 text-sm" placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && fetch()} />
           </div>
-          <div className="flex gap-2">{['all', 'student', 'lecturer', 'admin'].map(r => (<button key={r} onClick={() => setRoleFilter(r)} className={`btn-sm ${roleFilter === r ? 'btn-primary' : 'btn-secondary'}`}>{r}</button>))}</div>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">{['all', 'student', 'lecturer', 'admin'].map(r => (<button key={r} onClick={() => setRoleFilter(r)} className={`btn-sm whitespace-nowrap ${roleFilter === r ? 'btn-primary' : 'btn-secondary'}`}>{r}</button>))}</div>
           <button onClick={fetch} className="btn-primary btn-sm"><Search className="w-4 h-4" /> Search</button>
         </div>
         <div className="overflow-x-auto">

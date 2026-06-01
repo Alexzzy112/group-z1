@@ -11,6 +11,7 @@ const { logActivity, createNotification } = require('../utils/helpers');
 
 const router = express.Router();
 
+const uploadDir = process.env.VERCEL ? '/tmp/uploads' : path.join(__dirname, '..', '..', 'uploads');
 const isServerless = !!process.env.VERCEL;
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
@@ -157,6 +158,26 @@ router.put('/:id/feedback', auth, roles('admin', 'lecturer'), upload.single('fee
   }
   const submission = await Submission.findByIdAndUpdate(req.params.id, updateData, { new: true });
   res.json({ submission });
+});
+
+router.get('/:id/download/:fileIndex', auth, async (req, res) => {
+  try {
+    const submission = await Submission.findById(req.params.id);
+    if (!submission) return res.status(404).json({ error: 'Submission not found.' });
+    const file = submission.files[parseInt(req.params.fileIndex)];
+    if (!file) return res.status(404).json({ error: 'File not found.' });
+    if (file.fileUrl && file.fileUrl.startsWith('http')) {
+      return res.redirect(file.fileUrl);
+    }
+    const filePath = path.join(uploadDir, file.fileName);
+    if (fs.existsSync(filePath)) {
+      res.setHeader('Content-Disposition', `attachment; filename="${file.originalName}"`);
+      return res.sendFile(filePath);
+    }
+    res.status(404).json({ error: 'File not available.' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 router.delete('/:id', auth, async (req, res) => {

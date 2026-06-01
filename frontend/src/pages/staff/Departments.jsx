@@ -31,11 +31,11 @@ export default function StaffDepartments() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">Departments</h1><p className="text-slate-500 dark:text-slate-400">Manage departments and faculties</p></div>
-        <button onClick={() => { setEditDept(null); setForm({ name: '', code: '', faculty: '' }); setShowModal(true); }} className="btn-primary"><Plus className="w-4 h-4" /> New Department</button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Departments</h1><p className="text-slate-500 dark:text-slate-400">Manage departments and faculties</p></div>
+        <button onClick={() => { setEditDept(null); setForm({ name: '', code: '', faculty: '' }); setShowModal(true); }} className="btn-primary self-start"><Plus className="w-4 h-4" /> New Department</button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {depts.map(d => (
           <div key={d._id} className="card card-hover">
             <div className="flex items-start justify-between mb-3">
@@ -58,7 +58,7 @@ export default function StaffDepartments() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-xl" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">{editDept ? 'Edit Department' : 'Create Department'}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4"><div><label className="label">Code</label><input className="input" value={form.code} onChange={e => setForm({ ...form, code: e.target.value })} placeholder="CSC" required /></div><div><label className="label">Faculty</label><input className="input" value={form.faculty} onChange={e => setForm({ ...form, faculty: e.target.value })} placeholder="Engineering" required /></div></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label className="label">Code</label><input className="input" value={form.code} onChange={e => setForm({ ...form, code: e.target.value })} placeholder="CSC" required /></div><div><label className="label">Faculty</label><input className="input" value={form.faculty} onChange={e => setForm({ ...form, faculty: e.target.value })} placeholder="Engineering" required /></div></div>
               <div><label className="label">Department Name</label><input className="input" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Computer Science" required /></div>
               <div className="flex justify-end gap-3"><button type="button" className="btn-secondary" onClick={() => setShowModal(false)}>Cancel</button><button type="submit" className="btn-primary">{editDept ? 'Update' : 'Create'}</button></div>
             </form>

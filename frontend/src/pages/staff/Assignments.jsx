@@ -62,12 +62,12 @@ export default function StaffAssignments() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">Assignments</h1><p className="text-slate-500 dark:text-slate-400">Create and manage assignments</p></div>
-        <button onClick={openCreate} className="btn-primary"><Plus className="w-4 h-4" /> New Assignment</button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Assignments</h1><p className="text-slate-500 dark:text-slate-400">Create and manage assignments</p></div>
+        <button onClick={openCreate} className="btn-primary self-start"><Plus className="w-4 h-4" /> New Assignment</button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {assignList.map(a => (
           <div key={a._id} className="card card-hover">
             <div className="flex items-start justify-between mb-3">
@@ -109,13 +109,13 @@ export default function StaffAssignments() {
                         {sub.grade !== null ? <span className="badge badge-success">{sub.grade}/{sub.maxMarks}</span> : <span className="badge badge-warning">Pending</span>}
                       </div>
                     </div>
-                    {sub.files?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {sub.files.map((f, i) => (
-                          <a key={i} href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-white dark:bg-slate-700 px-2 py-1 rounded-md border dark:border-slate-600 hover:bg-slate-100"><Download className="w-3 h-3" /> {f.originalName}</a>
-                        ))}
-                      </div>
-                    )}
+                        {sub.files?.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {sub.files.map((f, i) => (
+                              <a key={i} href={`/api/submissions/${sub._id}/download/${i}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-white dark:bg-slate-700 px-2 py-1 rounded-md border dark:border-slate-600 hover:bg-slate-100"><Download className="w-3 h-3" /> {f.originalName}</a>
+                            ))}
+                          </div>
+                        )}
                     {sub.grade === null && (
                       <div className="flex items-center gap-2 pt-2 border-t dark:border-slate-600">
                         <input type="number" placeholder="Grade" className="input w-20 text-sm" id={`grade-${sub._id}`} />
@@ -148,7 +148,7 @@ export default function StaffAssignments() {
               <div><label className="label">Title</label><input className="input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
               <div><label className="label">Description</label><textarea className="input min-h-[80px]" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
               <div><label className="label">Instructions</label><textarea className="input min-h-[80px]" value={form.instructions} onChange={e => setForm({ ...form, instructions: e.target.value })} /></div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><label className="label">Max Marks</label><input type="number" className="input" value={form.maxMarks} onChange={e => setForm({ ...form, maxMarks: parseInt(e.target.value) })} /></div>
                 <div><label className="label">Deadline</label><input type="datetime-local" className="input" value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} required /></div>
               </div>

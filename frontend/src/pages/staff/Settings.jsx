@@ -13,7 +13,7 @@ export default function StaffSettings() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
-      <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">Settings</h1><p className="text-slate-500 dark:text-slate-400">Configure plagiarism thresholds and system preferences</p></div>
+      <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Settings</h1><p className="text-slate-500 dark:text-slate-400">Configure plagiarism thresholds and system preferences</p></div>
       <div className="card">
         <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600"><Shield className="w-5 h-5" /></div><div><h3 className="font-semibold text-slate-800 dark:text-white">Plagiarism Thresholds</h3><p className="text-sm text-slate-500">Configure plagiarism severity levels</p></div></div>
         <div className="space-y-4">
@@ -28,7 +28,7 @@ export default function StaffSettings() {
       </div>
       <div className="card">
         <div className="flex items-center gap-3 mb-4"><div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600"><Database className="w-5 h-5" /></div><div><h3 className="font-semibold text-slate-800 dark:text-white">System Information</h3></div></div>
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50"><span className="text-slate-500">Version</span><p className="font-medium text-slate-800 dark:text-white">2.0.0</p></div>
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50"><span className="text-slate-500">Environment</span><p className="font-medium text-slate-800 dark:text-white">{import.meta.env.PROD ? 'Production' : 'Development'}</p></div>
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50"><span className="text-slate-500">Authentication</span><p className="font-medium text-slate-800 dark:text-white">JWT with refresh tokens</p></div>

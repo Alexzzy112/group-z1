@@ -33,9 +33,9 @@ export default function StudentCourses() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">My Courses</h1><p className="text-slate-500 dark:text-slate-400">Courses you are currently enrolled in</p></div>
+      <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">My Courses</h1><p className="text-slate-500 dark:text-slate-400">Courses you are currently enrolled in</p></div>
 
-      <form onSubmit={handleEnroll} className="card flex items-center gap-3 p-4">
+      <form onSubmit={handleEnroll} className="card flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4">
         <input className="input flex-1" value={enrollCode} onChange={e => setEnrollCode(e.target.value)} placeholder="Enter course code to enroll (e.g. CSC101)" />
         <button type="submit" className="btn-primary whitespace-nowrap"><LogIn className="w-4 h-4" /> Enroll</button>
       </form>
@@ -47,7 +47,7 @@ export default function StudentCourses() {
           <p className="text-slate-500 dark:text-slate-400">Enter a course code above to enroll.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {courseList.map(course => (
             <div key={course._id} className="card">
               <div className="flex items-start justify-between mb-4">

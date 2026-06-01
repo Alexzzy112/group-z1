@@ -28,12 +28,12 @@ export default function StaffCourses() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">Courses</h1><p className="text-slate-500 dark:text-slate-400">Manage your courses</p></div>
-        <button onClick={openCreate} className="btn-primary"><Plus className="w-4 h-4" /> New Course</button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Courses</h1><p className="text-slate-500 dark:text-slate-400">Manage your courses</p></div>
+        <button onClick={openCreate} className="btn-primary self-start"><Plus className="w-4 h-4" /> New Course</button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {courseList.map(course => (
           <div key={course._id} className="card card-hover group">
             <div className="flex items-start justify-between mb-4">
@@ -56,13 +56,13 @@ export default function StaffCourses() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-xl" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">{editCourse ? 'Edit Course' : 'Create New Course'}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><label className="label">Course Code</label><input className="input" value={form.code} onChange={e => setForm({ ...form, code: e.target.value })} placeholder="CSC101" required /></div>
                 <div><label className="label">Credits</label><input type="number" className="input" value={form.credits} onChange={e => setForm({ ...form, credits: parseInt(e.target.value) })} /></div>
               </div>
               <div><label className="label">Course Title</label><input className="input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Introduction to CS" required /></div>
               <div><label className="label">Description</label><textarea className="input min-h-[80px]" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><label className="label">Semester</label><input className="input" value={form.semester} onChange={e => setForm({ ...form, semester: e.target.value })} placeholder="Fall 2024" /></div>
                 <div><label className="label">Academic Year</label><input className="input" value={form.academicYear} onChange={e => setForm({ ...form, academicYear: e.target.value })} placeholder="2024/2025" /></div>
               </div>

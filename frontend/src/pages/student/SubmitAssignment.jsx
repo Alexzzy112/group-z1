@@ -146,7 +146,7 @@ export default function SubmitAssignment() {
         </div>
       )}
 
-      <div className="flex items-center justify-end gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
         <button className="btn-secondary" onClick={() => navigate('/student/submissions')} disabled={uploading}>Cancel</button>
         <button className="btn-primary" onClick={handleSubmit} disabled={uploading || !selectedAssignment}>
           {uploading ? 'Submitting...' : <><Upload className="w-4 h-4" /> Submit Assignment</>}

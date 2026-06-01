@@ -31,12 +31,12 @@ export default function StudentDashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">Student Dashboard</h1><p className="text-slate-500 dark:text-slate-400">Welcome back, {user?.name}</p></div>
-        <Link to="/student/submit" className="btn-primary"><Upload className="w-4 h-4" /> Submit Assignment</Link>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Student Dashboard</h1><p className="text-slate-500 dark:text-slate-400">Welcome back, {user?.name}</p></div>
+        <Link to="/student/submit" className="btn-primary self-start"><Upload className="w-4 h-4" /> Submit Assignment</Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <div className="stat-card"><div className="stat-icon bg-blue-100 text-blue-600"><FileText className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{subs.length}</p><p className="text-sm text-slate-500">Total Submissions</p></div></div>
         <div className="stat-card"><div className="stat-icon bg-amber-100 text-amber-600"><Clock className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{pending}</p><p className="text-sm text-slate-500">Pending Review</p></div></div>
         <div className="stat-card"><div className="stat-icon bg-emerald-100 text-emerald-600"><CheckCircle className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{graded}</p><p className="text-sm text-slate-500">Graded</p></div></div>
@@ -79,7 +79,7 @@ export default function StudentDashboard() {
       <div className="card">
         <h3 className="font-semibold text-slate-800 dark:text-white mb-4">My Courses</h3>
         {cours.length === 0 ? <p className="text-slate-500 text-sm py-4 text-center">No enrolled courses</p> : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {cours.map(c => (
               <div key={c._id} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                 <p className="text-xs font-medium text-primary-600 mb-1">{c.code}</p>

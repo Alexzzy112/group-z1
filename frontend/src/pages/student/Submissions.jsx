@@ -32,9 +32,9 @@ export default function StudentSubmissions() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">My Submissions</h1><p className="text-slate-500 dark:text-slate-400">Track your assignment submissions and grades</p></div>
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div><h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">My Submissions</h1><p className="text-slate-500 dark:text-slate-400">Track your assignment submissions and grades</p></div>
+        <div className="flex items-center gap-2 self-start">
           <button onClick={fetch} className="btn-secondary btn-sm"><RefreshCw className="w-4 h-4" /> Refresh</button>
           <Link to="/student/submit" className="btn-primary btn-sm"><FileText className="w-4 h-4" /> New Submission</Link>
         </div>
@@ -46,9 +46,9 @@ export default function StudentSubmissions() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input className="input pl-9 py-2 text-sm" placeholder="Search by assignment title..." value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {['all', 'submitted', 'under_review', 'graded'].map(s => (
-              <button key={s} onClick={() => setFilter(s)} className={`btn-sm ${filter === s ? 'btn-primary' : 'btn-secondary'}`}>{s.replace('_', ' ')}</button>
+              <button key={s} onClick={() => setFilter(s)} className={`btn-sm whitespace-nowrap ${filter === s ? 'btn-primary' : 'btn-secondary'}`}>{s.replace('_', ' ')}</button>
             ))}
           </div>
         </div>

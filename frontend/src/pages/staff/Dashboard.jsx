@@ -56,20 +56,20 @@ export default function StaffDashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">
             {isAdmin ? 'Admin Dashboard' : 'Lecturer Dashboard'}
           </h1>
           <p className="text-slate-500 dark:text-slate-400">Welcome back, {user?.name}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 self-start">
           <Link to="/staff/assignments" className="btn-primary"><FileText className="w-4 h-4" /> Manage Assignments</Link>
           {isAdmin && <Link to="/staff/users" className="btn-secondary"><Users className="w-4 h-4" /> Manage Users</Link>}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
         <div className="stat-card"><div className="stat-icon bg-blue-100 text-blue-600"><BookOpen className="w-6 h-6" /></div><div><p className="text-2xl font-bold">{cours.length}</p><p className="text-sm text-slate-500">Courses</p></div></div>
         <div className="stat-card"><div className="stat-icon bg-indigo-100 text-indigo-600"><FileText className="w-6 h-6" /></div><div><p className="text-2xl font-bold">{assign.length}</p><p className="text-sm text-slate-500">Assignments</p></div></div>
         <div className="stat-card"><div className="stat-icon bg-emerald-100 text-emerald-600"><Users className="w-6 h-6" /></div><div><p className="text-2xl font-bold">{totalStudents}</p><p className="text-sm text-slate-500">Students</p></div></div>
@@ -78,7 +78,7 @@ export default function StaffDashboard() {
       </div>
 
       {isAdmin && stats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <div className="card"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600"><Users className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{stats.totalStudents + stats.totalLecturers}</p><p className="text-xs text-slate-500">Total Users</p></div></div></div>
           <div className="card"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600"><Activity className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{stats.totalSubmissions}</p><p className="text-xs text-slate-500">Total Submissions</p></div></div></div>
           <div className="card"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600"><AlertTriangle className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{stats.flaggedSubmissions}</p><p className="text-xs text-slate-500">Flagged</p></div></div></div>
