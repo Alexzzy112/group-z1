@@ -40,7 +40,7 @@ export default function StudentDashboard() {
         <div className="stat-card"><div className="stat-icon bg-blue-100 text-blue-600"><FileText className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{subs.length}</p><p className="text-sm text-slate-500">Total Submissions</p></div></div>
         <div className="stat-card"><div className="stat-icon bg-amber-100 text-amber-600"><Clock className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{pending}</p><p className="text-sm text-slate-500">Pending Review</p></div></div>
         <div className="stat-card"><div className="stat-icon bg-emerald-100 text-emerald-600"><CheckCircle className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{graded}</p><p className="text-sm text-slate-500">Graded</p></div></div>
-        <div className="stat-card"><div className="stat-icon bg-red-100 text-red-600"><AlertTriangle className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{flagged}</p><p className="text-sm text-slate-500">Flagged (>30%)</p></div></div>
+        <div className="stat-card"><div className="stat-icon bg-red-100 text-red-600"><AlertTriangle className="w-6 h-6" /></div><div><p className="text-2xl font-bold text-slate-800 dark:text-white">{flagged}</p><p className="text-sm text-slate-500">Flagged {'>30%'}</p></div></div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
