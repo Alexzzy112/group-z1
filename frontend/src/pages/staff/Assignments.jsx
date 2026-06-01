@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { assignments as assignApi, courses as courseApi } from '../../services/api';
+import { assignments as assignApi, courses as courseApi, submissions as subApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { FileText, Plus, Edit2, Trash2, Eye, Calendar, Clock, Users, Shield } from 'lucide-react';
+import { FileText, Plus, Edit2, Trash2, Eye, Calendar, Clock, Users, Shield, Download, CheckCircle, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function StaffAssignments() {
@@ -99,14 +99,38 @@ export default function StaffAssignments() {
               <button className="btn-secondary btn-sm" onClick={() => setShowSubs(false)}>Close</button>
             </div>
             {viewSubs.length === 0 ? <p className="text-center py-8 text-slate-500">No submissions yet</p> : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {viewSubs.map(sub => (
-                  <div key={sub._id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                    <div><p className="text-sm font-medium text-slate-800 dark:text-white">{sub.student?.name || 'Unknown'}</p><p className="text-xs text-slate-500">{sub.student?.studentId} - {new Date(sub.submittedAt).toLocaleString()}</p></div>
-                    <div className="flex items-center gap-2">
-                      {sub.plagiarismScore !== null && <span className={`badge ${sub.plagiarismScore > 30 ? 'badge-danger' : 'badge-warning'}`}>{sub.plagiarismScore}%</span>}
-                      {sub.grade !== null ? <span className="badge badge-success">{sub.grade}/{sub.maxMarks}</span> : <span className="badge badge-warning">Pending</span>}
+                  <div key={sub._id} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <div><p className="text-sm font-medium text-slate-800 dark:text-white">{sub.student?.name || 'Unknown'}</p><p className="text-xs text-slate-500">{sub.student?.studentId} - {new Date(sub.submittedAt).toLocaleString()}</p></div>
+                      <div className="flex items-center gap-2">
+                        {sub.plagiarismScore !== null && <span className={`badge ${sub.plagiarismScore > 30 ? 'badge-danger' : 'badge-warning'}`}>{sub.plagiarismScore}%</span>}
+                        {sub.grade !== null ? <span className="badge badge-success">{sub.grade}/{sub.maxMarks}</span> : <span className="badge badge-warning">Pending</span>}
+                      </div>
                     </div>
+                    {sub.files?.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {sub.files.map((f, i) => (
+                          <a key={i} href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-white dark:bg-slate-700 px-2 py-1 rounded-md border dark:border-slate-600 hover:bg-slate-100"><Download className="w-3 h-3" /> {f.originalName}</a>
+                        ))}
+                      </div>
+                    )}
+                    {sub.grade === null && (
+                      <div className="flex items-center gap-2 pt-2 border-t dark:border-slate-600">
+                        <input type="number" placeholder="Grade" className="input w-20 text-sm" id={`grade-${sub._id}`} />
+                        <button onClick={async () => {
+                          const grade = document.getElementById(`grade-${sub._id}`).value;
+                          if (!grade) return;
+                          try { await subApi.grade(sub._id, { grade: parseInt(grade), status: 'graded' }); toast.success('Graded'); viewSubmissions(sub.assignment); } catch { toast.error('Grade failed'); }
+                        }} className="btn-primary btn-sm"><CheckCircle className="w-3 h-3" /> Approve</button>
+                        <button onClick={async () => {
+                          if (!confirm('Delete this submission?')) return;
+                          try { await subApi.delete(sub._id); toast.success('Deleted'); viewSubmissions(sub.assignment); } catch { toast.error('Delete failed'); }
+                        }} className="btn-danger btn-sm"><XCircle className="w-3 h-3" /> Delete</button>
+                      </div>
+                    )}
+                    {sub.feedback && <p className="text-xs text-slate-500 mt-1 italic">Feedback: {sub.feedback}</p>}
                   </div>
                 ))}
               </div>
