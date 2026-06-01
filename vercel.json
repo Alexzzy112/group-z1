@@ -1,6 +1,5 @@
 {
   "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
   "functions": {
     "api/index.js": {
       "memory": 512,
@@ -8,7 +7,7 @@
     }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" }
+    { "source": "/(.*)", "destination": "/api" }
   ],
   "github": {
     "silent": true
