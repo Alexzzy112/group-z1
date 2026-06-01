@@ -38,10 +38,10 @@ router.get('/:id', auth, async (req, res) => {
 
 router.post('/', auth, roles('admin', 'lecturer'), async (req, res) => {
   const { code, title, description, credits, department, semester, academicYear } = req.body;
-  const existing = await Course.findOne({ code: code.toUpperCase(), department });
-  if (existing) return res.status(400).json({ error: 'Course code already exists in this department.' });
+  const existing = await Course.findOne({ code: code.toUpperCase() });
+  if (existing) return res.status(400).json({ error: 'Course code already exists.' });
   const course = await Course.create({
-    code: code.toUpperCase(), title, description, credits, department,
+    code: code.toUpperCase(), title, description, credits, department: department || undefined,
     lecturer: req.user._id, semester, academicYear
   });
   await logActivity(req.user._id, 'create_course', 'Course', course._id, `Created course: ${code}`);
