@@ -66,7 +66,7 @@ export default function StaffUsers() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input className="input pl-9 py-2 text-sm" placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && fetch()} />
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">{['all', 'student', 'lecturer', 'admin'].map(r => (<button key={r} onClick={() => setRoleFilter(r)} className={`btn-sm whitespace-nowrap ${roleFilter === r ? 'btn-primary' : 'btn-secondary'}`}>{r}</button>))}</div>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">{['all', 'student'].map(r => (<button key={r} onClick={() => setRoleFilter(r)} className={`btn-sm whitespace-nowrap ${roleFilter === r ? 'btn-primary' : 'btn-secondary'}`}>{r}</button>))}</div>
           <button onClick={fetch} className="btn-primary btn-sm"><Search className="w-4 h-4" /> Search</button>
         </div>
         <div className="overflow-x-auto">
@@ -112,8 +112,6 @@ export default function StaffUsers() {
               <div><label className="label">Role</label>
                 <select className="input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
                   <option value="student">Student</option>
-                  <option value="lecturer">Lecturer</option>
-                  <option value="admin">Admin</option>
                 </select>
               </div>
               <div><label className="label">Student ID (optional)</label><input className="input" value={form.studentId} onChange={e => setForm({ ...form, studentId: e.target.value })} /></div>

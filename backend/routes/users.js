@@ -54,9 +54,10 @@ router.put('/:id', auth, roles('admin', 'lecturer'), async (req, res) => {
   res.json({ user });
 });
 
-router.delete('/:id', auth, roles('admin'), async (req, res) => {
+router.delete('/:id', auth, roles('admin', 'lecturer'), async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
   if (!user) return res.status(404).json({ error: 'User not found.' });
+  await logActivity(req.user._id, 'deactivate_user', 'User', req.params.id, `Deactivated user: ${user.name}`);
   res.json({ success: true, message: 'User deactivated.' });
 });
 
