@@ -65,7 +65,7 @@ export default function App() {
       <Route path="/staff/courses" element={<ProtectedRoute roles={staffRoles}><AppLayout><StaffCourses /></AppLayout></ProtectedRoute>} />
       <Route path="/staff/assignments" element={<ProtectedRoute roles={staffRoles}><AppLayout><StaffAssignments /></AppLayout></ProtectedRoute>} />
       <Route path="/staff/plagiarism" element={<ProtectedRoute roles={staffRoles}><AppLayout><StaffPlagiarism /></AppLayout></ProtectedRoute>} />
-      <Route path="/staff/users" element={<ProtectedRoute roles={['admin']}><AppLayout><StaffUsers /></AppLayout></ProtectedRoute>} />
+      <Route path="/staff/users" element={<ProtectedRoute roles={staffRoles}><AppLayout><StaffUsers /></AppLayout></ProtectedRoute>} />
       <Route path="/staff/departments" element={<ProtectedRoute roles={['admin']}><AppLayout><StaffDepartments /></AppLayout></ProtectedRoute>} />
       <Route path="/staff/reports" element={<ProtectedRoute roles={['admin']}><AppLayout><StaffReports /></AppLayout></ProtectedRoute>} />
       <Route path="/staff/settings" element={<ProtectedRoute roles={['admin']}><AppLayout><StaffSettings /></AppLayout></ProtectedRoute>} />

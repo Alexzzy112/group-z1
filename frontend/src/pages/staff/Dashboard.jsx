@@ -89,7 +89,7 @@ export default function StaffDashboard() {
         </div>
         <div className="flex flex-wrap gap-2 self-start">
           <Link to="/staff/assignments" className="btn-primary"><FileText className="w-4 h-4" /> Manage Assignments</Link>
-          {isAdmin && <Link to="/staff/users" className="btn-secondary"><Users className="w-4 h-4" /> Manage Users</Link>}
+          <Link to="/staff/users" className="btn-secondary"><Users className="w-4 h-4" /> Manage Users</Link>
         </div>
       </div>
 

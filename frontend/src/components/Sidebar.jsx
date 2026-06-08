@@ -15,11 +15,11 @@ const staffLinks = [
   { to: '/staff/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/staff/courses', icon: BookOpen, label: 'Courses' },
   { to: '/staff/assignments', icon: FileText, label: 'Assignments' },
+  { to: '/staff/users', icon: Users, label: 'Users' },
   { to: '/staff/plagiarism', icon: Shield, label: 'Plagiarism' },
 ];
 
 const adminLinks = [
-  { to: '/staff/users', icon: Users, label: 'Users' },
   { to: '/staff/departments', icon: Building2, label: 'Departments' },
   { to: '/staff/reports', icon: FileSpreadsheet, label: 'Reports' },
   { to: '/staff/notifications', icon: Bell, label: 'Notifications' },

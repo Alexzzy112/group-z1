@@ -32,8 +32,9 @@ router.get('/:id', auth, async (req, res) => {
   res.json({ user });
 });
 
-router.post('/', auth, roles('admin'), async (req, res) => {
+router.post('/', auth, roles('admin', 'lecturer'), async (req, res) => {
   const { name, email, password, role, studentId, department, faculty } = req.body;
+  if (req.user.role === 'lecturer' && role === 'admin') return res.status(403).json({ error: 'Lecturers cannot create admin accounts.' });
   const existing = await User.findOne({ email });
   if (existing) return res.status(400).json({ error: 'Email already in use.' });
   const user = await User.create({ name, email, password, role: role || 'student', studentId, department, faculty });
@@ -41,7 +42,7 @@ router.post('/', auth, roles('admin'), async (req, res) => {
   res.status(201).json({ user });
 });
 
-router.put('/:id', auth, roles('admin'), async (req, res) => {
+router.put('/:id', auth, roles('admin', 'lecturer'), async (req, res) => {
   const allowed = ['name', 'email', 'role', 'department', 'faculty', 'isActive', 'studentId'];
   const updates = {};
   for (const key of allowed) {
