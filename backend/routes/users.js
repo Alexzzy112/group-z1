@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', auth, roles('admin', 'lecturer'), async (req, res) => {
   const { role, department, search, page = 1, limit = 50 } = req.query;
-  const query = {};
+  const query = { isActive: true };
   if (role) query.role = role;
   if (department) query.department = department;
   if (search) {
