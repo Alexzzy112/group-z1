@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, BookOpen, FileText, Upload, BarChart3, Users, Building2, Settings, LogOut, Shield, GraduationCap, FileSpreadsheet } from 'lucide-react';
+import { LayoutDashboard, BookOpen, FileText, Upload, BarChart3, Users, Building2, Settings, LogOut, Shield, GraduationCap, FileSpreadsheet, LogIn, Bell } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const studentLinks = [
@@ -8,6 +8,7 @@ const studentLinks = [
   { to: '/student/courses', icon: BookOpen, label: 'My Courses' },
   { to: '/student/submit', icon: Upload, label: 'Submit Assignment' },
   { to: '/student/submissions', icon: FileText, label: 'My Submissions' },
+  { to: '/student/dashboard', icon: LogIn, label: 'Register Courses' },
 ];
 
 const staffLinks = [
@@ -21,6 +22,7 @@ const adminLinks = [
   { to: '/staff/users', icon: Users, label: 'Users' },
   { to: '/staff/departments', icon: Building2, label: 'Departments' },
   { to: '/staff/reports', icon: FileSpreadsheet, label: 'Reports' },
+  { to: '/staff/notifications', icon: Bell, label: 'Notifications' },
   { to: '/staff/settings', icon: Settings, label: 'Settings' },
 ];
 

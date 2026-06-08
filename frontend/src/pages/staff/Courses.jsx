@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { courses as courseApi } from '../../services/api';
-import { BookOpen, Users, Plus, Edit2 } from 'lucide-react';
+import { BookOpen, Users, Plus, Edit2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function StaffCourses() {
@@ -40,6 +40,7 @@ export default function StaffCourses() {
               <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600"><BookOpen className="w-6 h-6" /></div>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button onClick={() => { setEditCourse(course); setForm({ code: course.code, title: course.title, description: course.description, credits: course.credits, semester: course.semester, academicYear: course.academicYear }); setShowModal(true); }} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400"><Edit2 className="w-4 h-4" /></button>
+                <button onClick={async () => { if (!confirm('Delete this course? This will remove all enrollments.')) return; try { await courseApi.delete(course._id); toast.success('Course deleted'); fetch(); } catch { toast.error('Delete failed'); } }} className="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
               </div>
             </div>
             <p className="text-xs font-semibold text-primary-600 uppercase tracking-wider mb-1">{course.code}</p>

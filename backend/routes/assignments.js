@@ -54,8 +54,10 @@ router.put('/:id', auth, roles('admin', 'lecturer'), async (req, res) => {
 });
 
 router.delete('/:id', auth, roles('admin', 'lecturer'), async (req, res) => {
-  const assignment = await Assignment.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
+  const assignment = await Assignment.findByIdAndDelete(req.params.id);
   if (!assignment) return res.status(404).json({ error: 'Assignment not found.' });
+  await Submission.deleteMany({ assignment: req.params.id });
+  await logActivity(req.user._id, 'delete_assignment', 'Assignment', req.params.id, `Deleted: ${assignment.title}`);
   res.json({ success: true });
 });
 

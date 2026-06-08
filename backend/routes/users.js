@@ -32,6 +32,15 @@ router.get('/:id', auth, async (req, res) => {
   res.json({ user });
 });
 
+router.post('/', auth, roles('admin'), async (req, res) => {
+  const { name, email, password, role, studentId, department, faculty } = req.body;
+  const existing = await User.findOne({ email });
+  if (existing) return res.status(400).json({ error: 'Email already in use.' });
+  const user = await User.create({ name, email, password, role: role || 'student', studentId, department, faculty });
+  await logActivity(req.user._id, 'create_user', 'User', user._id, `Created user: ${name} (${role})`);
+  res.status(201).json({ user });
+});
+
 router.put('/:id', auth, roles('admin'), async (req, res) => {
   const allowed = ['name', 'email', 'role', 'department', 'faculty', 'isActive', 'studentId'];
   const updates = {};
@@ -40,6 +49,7 @@ router.put('/:id', auth, roles('admin'), async (req, res) => {
   }
   const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true }).populate('department');
   if (!user) return res.status(404).json({ error: 'User not found.' });
+  await logActivity(req.user._id, 'update_user', 'User', req.params.id, `Updated user: ${user.name}`);
   res.json({ user });
 });
 

@@ -20,6 +20,7 @@ import StaffUsers from './pages/staff/Users';
 import StaffDepartments from './pages/staff/Departments';
 import StaffReports from './pages/staff/Reports';
 import StaffSettings from './pages/staff/Settings';
+import AdminNotifications from './pages/staff/AdminNotifications';
 
 function AppLayout({ children }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -68,6 +69,7 @@ export default function App() {
       <Route path="/staff/departments" element={<ProtectedRoute roles={['admin']}><AppLayout><StaffDepartments /></AppLayout></ProtectedRoute>} />
       <Route path="/staff/reports" element={<ProtectedRoute roles={['admin']}><AppLayout><StaffReports /></AppLayout></ProtectedRoute>} />
       <Route path="/staff/settings" element={<ProtectedRoute roles={['admin']}><AppLayout><StaffSettings /></AppLayout></ProtectedRoute>} />
+      <Route path="/staff/notifications" element={<ProtectedRoute roles={['admin']}><AppLayout><AdminNotifications /></AppLayout></ProtectedRoute>} />
 
       <Route path="/lecturer/*" element={user && staffRoles.includes(user.role) ? <Navigate to="/staff/dashboard" /> : <Navigate to="/login" />} />
       <Route path="/admin/*" element={user && staffRoles.includes(user.role) ? <Navigate to="/staff/dashboard" /> : <Navigate to="/login" />} />

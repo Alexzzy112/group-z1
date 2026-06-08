@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { assignments, submissions } from '../../services/api';
-import { Upload, File, X, FileText, CheckCircle, AlertTriangle, Loader2, ScrollText, BookOpen } from 'lucide-react';
+import { Upload, File, X, FileText, CheckCircle, AlertTriangle, Loader2, BookOpen } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SubmitAssignment() {
@@ -14,7 +14,6 @@ export default function SubmitAssignment() {
   const [assignmentDetail, setAssignmentDetail] = useState(null);
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
-  const [textContent, setTextContent] = useState('');
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -46,12 +45,11 @@ export default function SubmitAssignment() {
 
   const handleSubmit = async () => {
     if (!selectedAssignment) return toast.error('Please select an assignment');
-    if (files.length === 0 && !textContent.trim()) return toast.error('Please upload a file or enter text');
+    if (files.length === 0) return toast.error('Please upload at least one file');
     setUploading(true);
     setProgress(10);
     const formData = new FormData();
     formData.append('assignmentId', selectedAssignment);
-    if (textContent.trim()) formData.append('textContent', textContent);
     files.forEach(f => formData.append('files', f));
     try {
       setProgress(60);
@@ -127,11 +125,6 @@ export default function SubmitAssignment() {
             ))}
           </div>
         )}
-      </div>
-
-      <div className="card">
-        <label className="label">Or Paste Text Content</label>
-        <textarea className="input min-h-[120px] resize-y" placeholder="Paste your assignment text here (optional, for plagiarism checking)..." value={textContent} onChange={(e) => setTextContent(e.target.value)} disabled={uploading} />
       </div>
 
       {uploading && (

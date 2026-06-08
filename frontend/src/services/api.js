@@ -55,6 +55,7 @@ export const auth = {
 export const users = {
   list: (params) => api.get('/users', { params }),
   get: (id) => api.get(`/users/${id}`),
+  create: (data) => api.post('/users', data),
   update: (id, data) => api.put(`/users/${id}`, data),
   deactivate: (id) => api.delete(`/users/${id}`),
   enroll: (id, courseId) => api.post(`/users/${id}/enroll`, { courseId }),
@@ -105,6 +106,7 @@ export const admin = {
   deleteDepartment: (id) => api.delete(`/admin/departments/${id}`),
   logs: (params) => api.get('/admin/logs', { params }),
   exportReport: (params) => api.get('/admin/reports/export', { params, responseType: 'blob' }),
+  notify: (data) => api.post('/admin/notify', data),
 };
 
 export const notifications = {

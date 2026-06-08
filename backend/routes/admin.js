@@ -57,6 +57,21 @@ router.delete('/departments/:id', auth, roles('admin'), async (req, res) => {
   res.json({ success: true });
 });
 
+router.post('/notify', auth, roles('admin'), async (req, res) => {
+  const { title, message, type, targetRole } = req.body;
+  if (!title || !message) return res.status(400).json({ error: 'Title and message are required.' });
+  const query = { isActive: true };
+  if (targetRole) query.role = targetRole;
+  const users = await User.find(query);
+  const notifications = users.map(u => ({
+    user: u._id, type: type || 'announcement', title, message,
+    link: req.body.link || ''
+  }));
+  await Notification.insertMany(notifications);
+  await logActivity(req.user._id, 'send_notification', 'Notification', null, `Sent notification: ${title} to ${users.length} users`);
+  res.json({ success: true, sentTo: users.length });
+});
+
 router.get('/logs', auth, roles('admin'), async (req, res) => {
   const { page = 1, limit = 50 } = req.query;
   const logs = await ActivityLog.find()

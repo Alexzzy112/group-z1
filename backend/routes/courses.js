@@ -58,9 +58,11 @@ router.put('/:id', auth, roles('admin', 'lecturer'), async (req, res) => {
   res.json({ course });
 });
 
-router.delete('/:id', auth, roles('admin'), async (req, res) => {
-  const course = await Course.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
+router.delete('/:id', auth, roles('admin', 'lecturer'), async (req, res) => {
+  const course = await Course.findByIdAndDelete(req.params.id);
   if (!course) return res.status(404).json({ error: 'Course not found.' });
+  await User.updateMany({}, { $pull: { enrolledCourses: req.params.id, assignedCourses: req.params.id } });
+  await logActivity(req.user._id, 'delete_course', 'Course', req.params.id, `Deleted course: ${course.code}`);
   res.json({ success: true });
 });
 
