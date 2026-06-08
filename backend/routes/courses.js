@@ -44,6 +44,7 @@ router.post('/', auth, roles('admin', 'lecturer'), async (req, res) => {
     code: code.toUpperCase(), title, description, credits, department: department || undefined,
     lecturer: req.user._id, semester, academicYear
   });
+  await User.findByIdAndUpdate(req.user._id, { $addToSet: { assignedCourses: course._id } });
   await logActivity(req.user._id, 'create_course', 'Course', course._id, `Created course: ${code}`);
   res.status(201).json({ course });
 });

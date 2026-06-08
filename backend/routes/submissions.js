@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Submission = require('../models/Submission');
 const Assignment = require('../models/Assignment');
+const Course = require('../models/Course');
 const auth = require('../middleware/auth');
 const roles = require('../middleware/roles');
 const upload = require('../middleware/upload');
@@ -101,7 +102,10 @@ router.post('/submit', auth, roles('student'), upload.array('files', 5), async (
 router.get('/', auth, async (req, res) => {
   let query = {};
   if (req.user.role === 'student') query.student = req.user._id;
-  if (req.user.role === 'lecturer') query.course = { $in: req.user.assignedCourses || [] };
+  if (req.user.role === 'lecturer') {
+    const lecturerCourses = await Course.find({ lecturer: req.user._id }).select('_id');
+    query.course = { $in: lecturerCourses.map(c => c._id) };
+  }
   if (req.query.assignment) query.assignment = req.query.assignment;
   if (req.query.course) query.course = req.query.course;
   if (req.query.status) query.status = req.query.status;
