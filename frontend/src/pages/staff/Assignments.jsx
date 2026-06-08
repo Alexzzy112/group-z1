@@ -112,7 +112,7 @@ export default function StaffAssignments() {
                         {sub.files?.length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-2">
                             {sub.files.map((f, i) => (
-                              <a key={i} href={`/api/submissions/${sub._id}/download/${i}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-white dark:bg-slate-700 px-2 py-1 rounded-md border dark:border-slate-600 hover:bg-slate-100"><Download className="w-3 h-3" /> {f.originalName}</a>
+                              <a key={i} href={`/api/submissions/${sub._id}/download/${i}?token=${localStorage.getItem('accessToken')}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-white dark:bg-slate-700 px-2 py-1 rounded-md border dark:border-slate-600 hover:bg-slate-100"><Download className="w-3 h-3" /> {f.originalName}</a>
                             ))}
                           </div>
                         )}

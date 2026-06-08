@@ -137,7 +137,7 @@ export default function StaffDashboard() {
                     <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{sub.student?.name || 'Unknown'}</p>
                     <p className="text-xs text-slate-500">{sub.assignment?.title} - {new Date(sub.submittedAt).toLocaleDateString()}</p>
                     {sub.files?.length > 0 && sub.files.map((f, i) => (
-                      <a key={i} href={`/api/submissions/${sub._id}/download/${i}`} target="_blank" className="inline-flex items-center gap-1 text-xs text-primary-600 hover:underline mt-1 mr-2"><Download className="w-3 h-3" />{f.originalName}</a>
+                      <a key={i} href={`/api/submissions/${sub._id}/download/${i}?token=${localStorage.getItem('accessToken')}`} target="_blank" className="inline-flex items-center gap-1 text-xs text-primary-600 hover:underline mt-1 mr-2"><Download className="w-3 h-3" />{f.originalName}</a>
                     ))}
                   </div>
                   <div className="flex items-center gap-2">

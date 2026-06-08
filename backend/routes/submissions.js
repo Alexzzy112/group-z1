@@ -1,9 +1,11 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 const Submission = require('../models/Submission');
 const Assignment = require('../models/Assignment');
 const Course = require('../models/Course');
+const User = require('../models/User');
 const auth = require('../middleware/auth');
 const roles = require('../middleware/roles');
 const upload = require('../middleware/upload');
@@ -164,7 +166,20 @@ router.put('/:id/feedback', auth, roles('admin', 'lecturer'), upload.single('fee
   res.json({ submission });
 });
 
-router.get('/:id/download/:fileIndex', auth, async (req, res) => {
+async function downloadAuth(req, res, next) {
+  try {
+    let token = req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : null;
+    if (!token) token = req.query.token;
+    if (!token) return res.status(401).json({ error: 'Access denied. No token provided.' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'groupz1-secret-key-2024');
+    const user = await User.findById(decoded.id);
+    if (!user || !user.isActive) return res.status(401).json({ error: 'Invalid token.' });
+    req.user = user;
+    next();
+  } catch { return res.status(401).json({ error: 'Invalid token.' }); }
+}
+
+router.get('/:id/download/:fileIndex', downloadAuth, async (req, res) => {
   try {
     const submission = await Submission.findById(req.params.id);
     if (!submission) return res.status(404).json({ error: 'Submission not found.' });
